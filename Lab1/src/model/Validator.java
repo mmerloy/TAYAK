@@ -1,5 +1,6 @@
 package model;
 
+import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -9,6 +10,7 @@ public  abstract class Validator {
     private static List<String>  operations = Arrays.asList(".", "*", "/", "+", "-", "^");
     public static String processExpression(String expression) {
         expression = expression.replaceAll(" ","");
+        expression = expression.replaceAll("(\\d)\\(", "$1*(");
         expression = changeLog(expression);
         expression = expression.replaceAll(",", ".");
         expression = expression.replaceAll("log", "l");
@@ -27,19 +29,19 @@ public  abstract class Validator {
 
     private static void validateNullDivide(String expression) throws RuntimeException {
         if (expression.contains("/0")) {
-            throw new RuntimeException("Чыо на ноль делеш а?");
+            throw new RuntimeException("Деление на ноль невозможно:(");
         }
     }
 
     private static void validateNumbers(String expression) throws RuntimeException {
         if (expression.matches(".*\\d*\\.\\d*\\..*")) {
-            throw new RuntimeException("Что-то больна, может хватит?(((");
+            throw new InvalidParameterException("Что-то больна, может хватит?(((");
         }
     }
 
     private static void validateBrackets(String expression) {
         if ( countCharOccurance(expression,'(') != countCharOccurance(expression,')'))
-            throw new RuntimeException("Ты скопки ставеть не умеиш штоли?");
+            throw new InvalidParameterException("Скобки расставлены неверно:(");
     }
 
     private static void validateOperations(String expression) {
@@ -50,12 +52,12 @@ public  abstract class Validator {
 
     private static void validateOperation(String oper, String expression) {
         if (expression.contains(oper + oper)) {
-            throw new RuntimeException("Чота ты накасячел ");
+            throw new RuntimeException("Что-то тут не так ");
         }
     }
     private static void validateLog(String expression) {
         if (expression.contains("l") && !expression.matches(".*l\\([^|.]+\\|[^|.]+\\).*")) {
-            throw new RuntimeException("Ошибка аргументов логарифма");
+            throw new InvalidParameterException("Ошибка аргументов логарифма");
         }
     }
 

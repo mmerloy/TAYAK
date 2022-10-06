@@ -14,16 +14,15 @@ public class Translator {
     private boolean isPrevElementOperation;
 
     public Translator() {
-        //
         priorMap = new HashMap<>() {{
             put("(", 1);
             put(")", 1);
-//            put("|", 1);
+            put("|", 1);
             put("+", 2);
             put("-", 2);
             put("*", 3);
             put("/", 3);
-//            put("^", 4);
+            put("^", 4);
             put("log", 4);
         }};
         operationsStack = new Stack<>();
@@ -70,13 +69,13 @@ public class Translator {
      */
     private void translateOperation(String operation) {
         isPrevElementOperation = true;
-//        if (operation.equals("|")) {
-//            while(!operationsStack.peek().getOperation().equals("(")) {
-//                result.append(operationsStack.peek());
-//                resultList.add(operationsStack.pop());
-//            }
-//            return;
-//        }
+        if (operation.equals("|")) {
+            while(!operationsStack.peek().getOperation().equals("(")) {
+                result.append(operationsStack.peek());
+                resultList.add(operationsStack.pop());
+            }
+            return;
+        }
         if (operation.equals("(")) {
             operationsStack.push(newOper(operation));
             return;

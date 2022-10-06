@@ -1,6 +1,6 @@
 package model;
 
-import java.util.ArrayList;
+import view.View;
 
 import java.util.List;
 
@@ -9,24 +9,23 @@ public class Calculator  {
     private int iterator;
 
     /**
-     *
-     * @param expression
-     * @return
+     * Вычисляет выражение, прежставленно в виде операций.
+     * @param expression выражение, полученно путем применения Translator.translate() метода.
+     * @return Решение выражения.
      */
     public String calculateExpression(List<Operation> expression) {
-        List resExpression = new ArrayList(expression);
-        while (resExpression.size() != 1) {
+        while (expression.size() != 1) {
             iterator = 0;
-            resExpression = solveSimpleExpression(resExpression);
+            expression = solveSimpleExpression(expression);
         }
-        System.out.println(resExpression);
-        return resExpression.toString();
+        View.print(expression + "\n");
+        return expression.toString();
     }
 
     /**
-     *
-     * @param expression
-     * @return
+     * Расставляет приоритет операциям
+     * @param expression массив операций
+     * @return решенное выражение состоящее из одной константы
      */
     private List<Operation> solveSimpleExpression(List<Operation> expression) {
         while ( (iterator + 2) < expression.size() && expression.get(iterator + 2).getPriority() == 0) {
