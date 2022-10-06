@@ -13,6 +13,7 @@ public  abstract class Validator {
         expression = expression.replaceAll("\\s+","");
         expression = expression.replaceAll("(\\d)\\(", "$1*(");
         expression = expression.replaceAll("\\(-(\\d)", "(0-$1");
+        expression = expression.replaceAll("(\\))(\\()", "$1*$2");
         expression = changeLog(expression);
         expression = expression.replaceAll(",", ".");
         expression = expression.replaceAll("log", "l");
