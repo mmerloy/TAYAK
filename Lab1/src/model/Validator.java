@@ -9,8 +9,10 @@ import java.util.regex.Pattern;
 public  abstract class Validator {
     private static List<String>  operations = Arrays.asList(".", "*", "/", "+", "-", "^");
     public static String processExpression(String expression) {
-        expression = expression.replaceAll(" ","");
+        //expression = expression.replaceAll("/\s\s+/g", " ");
+        expression = expression.replaceAll("\\s+","");
         expression = expression.replaceAll("(\\d)\\(", "$1*(");
+        expression = expression.replaceAll("\\(-(\\d)", "(0-$1");
         expression = changeLog(expression);
         expression = expression.replaceAll(",", ".");
         expression = expression.replaceAll("log", "l");
@@ -35,7 +37,7 @@ public  abstract class Validator {
 
     private static void validateNumbers(String expression) throws RuntimeException {
         if (expression.matches(".*\\d*\\.\\d*\\..*")) {
-            throw new InvalidParameterException("Что-то больна, может хватит?(((");
+            throw new InvalidParameterException("Может не нужно?");
         }
     }
 
@@ -43,6 +45,7 @@ public  abstract class Validator {
         if ( countCharOccurance(expression,'(') != countCharOccurance(expression,')'))
             throw new InvalidParameterException("Скобки расставлены неверно:(");
     }
+
 
     private static void validateOperations(String expression) {
         for (String oper: operations) {

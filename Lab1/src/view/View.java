@@ -29,8 +29,8 @@ public class View
      */
     public static void printMenu()
     {
-        System.out.println("1 - Вычисление\n");
-        System.out.println("2 - Выход из программы \n");
+        System.out.println("1 - Вычисление");
+        System.out.println("2 - Выход из программы");
         System.out.println("-------------------------------\n");
     }
 
