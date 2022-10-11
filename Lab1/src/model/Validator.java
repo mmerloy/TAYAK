@@ -9,9 +9,24 @@ import java.util.regex.Pattern;
 public  abstract class Validator {
     private static List<String>  operations = Arrays.asList(".", "*", "/", "+", "-", "^");
     public static String processExpression(String expression) {
-        //expression = expression.replaceAll("/\s\s+/g", " ");
+        //Проверка, что первый аргумент долен быть числом
+        boolean foundOp = false;
+        for (int i = 0; i < expression.length(); i++) {
+            if(expression.contains("log") || operations.contains(Character.toString(expression.charAt(i)))){
+                foundOp = true;
+                break;
+            }
+        }
+        if(!foundOp){
+            Double.parseDouble(expression);
+        }
+        //Простановка первых в строке унарных оперторов как бинарных
+        if(expression.charAt(0) =='-' || expression.charAt(0)=='+'){
+            expression = "0" + expression;
+        }
         expression = expression.replaceAll("\\s+","");
         expression = expression.replaceAll("(\\d)\\(", "$1*(");
+        expression = expression.replaceAll("\\(-\\(", "(0-(");
         expression = expression.replaceAll("\\(-(\\d)", "(0-$1");
         expression = expression.replaceAll("(\\))(\\()", "$1*$2");
         expression = changeLog(expression);
@@ -20,7 +35,8 @@ public  abstract class Validator {
         validateBrackets(expression);
         validateOperations(expression);
         validateNullDivide(expression);
-        validateLog(expression);
+        if(expression.length() >= 6)
+            validateLog(expression);
         validateNumbers(expression);
         return expression;
     }
@@ -59,8 +75,62 @@ public  abstract class Validator {
             throw new RuntimeException("Что-то тут не так ");
         }
     }
+
+
+    //Первичная обертка над foundInvalidLogArgs
+    private static boolean foundInvalidLogArgs(String expr){
+        return foundInvalidLogArgs(expr, 1).success;
+    }
+
+    //Рекурсивная проверка корректности данных внутри скобок логарифма
+    private static FoundInvalidLogArgsResult foundInvalidLogArgs(String expr, int startPos){
+        var result = new FoundInvalidLogArgsResult();
+
+        //Начальный указатель должен указывать на откр скобку
+        if(expr.charAt(startPos)!='('){
+            result.success = false;
+            return result;
+        }
+
+        //Переменная которая отвечает за неудачный результат в глубине рекурсии
+        boolean innerSuccess = true;
+        int tokenCnt = 0;
+        for (int i = startPos + 1; i < expr.length(); i++) {
+            char c = expr.charAt(i);
+            //Если внутри аргументов будет логарифм, то спускаемся глубде в рекурсию
+            if(c == 'l'){
+                var innerRes = foundInvalidLogArgs(expr, i+1);
+                //Елсли в глубине будет хотябы один неудачный вариант, то поднимится вверх с false
+                innerSuccess &= innerRes.success;
+                i = innerRes.lastIndex;
+                break;
+            }
+
+            //Если просмотрели все аргументы, то должны были найти хотя бы один разделитель
+            if(c==')'){
+                result.success = tokenCnt == 1;
+                result.lastIndex = i;
+                return result;
+            }
+
+            //Ведем подсчет количества разделителей
+            if(c=='|'){
+                ++tokenCnt;
+                if(tokenCnt > 1){
+                    result.success = false;
+                    return result;
+                }
+            }
+        }
+        //Все глубинные результаты и количество внехних разделителей должны быть в норме
+        result.success = innerSuccess && tokenCnt == 1;
+        return result;
+    }
+
     private static void validateLog(String expression) {
-        if (expression.contains("l") && !expression.matches(".*l\\([^|.]+\\|[^|.]+\\).*")) {
+        boolean ok = foundInvalidLogArgs(expression);
+
+        if (!ok && expression.contains("l") && !expression.matches(".*l\\([^|.]+\\|[^|.]+\\).*")) {
             throw new InvalidParameterException("Ошибка аргументов логарифма");
         }
     }
