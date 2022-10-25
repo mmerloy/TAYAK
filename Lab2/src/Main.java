@@ -27,7 +27,9 @@ public class Main {
                 }
             });
             if (!errors.get()) {
+                System.out.println("Изначальный граф");
                 System.out.println(gp.toString());
+
 
                 Entity issueEntity;
                 while ((issueEntity = Utils.getIssueEntity(gp)) != null) {
@@ -38,13 +40,14 @@ public class Main {
                 }
 
                 TuringMachine tm = new TuringMachine(gp);
+                System.out.println("Детерминированный граф");
                 System.out.println(gp.toString());
-                System.out.println(tm.isCorrectString("aekc"));
-                System.out.println(tm.isCorrectString("ah"));
-                System.out.println(tm.isCorrectString("a"));       
-                System.out.println(tm.isCorrectString("ahg"));
+                System.out.println(tm.isCorrectString("ab+cd    *eee=357"));
+                //System.out.println(tm.isCorrectString("a"));
+//                System.out.println(tm.isCorrectString("a"));
+//                System.out.println(tm.isCorrectString("ahg"));
             }
-//            Utils.normalizeForOneEntity(gp,new Entity("q0"));
+          //Utils.normalizeForOneEntity(gp,new Entity("q0"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

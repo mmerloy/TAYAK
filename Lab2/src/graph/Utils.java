@@ -85,12 +85,12 @@ public class Utils {
                             replaceEdge(gp, e, ((Edge) edges[i]), new Edge(characterFrom, newRightEntity));
                         }
                     }
-                }
-                //                for (Edge edge : e.getEdges()) {
+               }
+//                                for (Edge edge : e.getEdges()) {
 //                    if (issueEntities.contains(edge.getTo()))
 //                        replaceEdge(gp, e, edge, new Edge(edge.getCharacter(), newRightEntity));
-//                }
-            }
+//                  }
+           }
         }
         return true;
     }
@@ -106,15 +106,16 @@ public class Utils {
     }
 
     private static void replaceEdge(Graph gp, Entity e, Edge oldEdge, Edge newEdge) {
-        gp.removeEdge(e, oldEdge);
+        System.out.println("aaaaa");
+        gp.removeEdge(e,oldEdge);
         gp.addNewEntity(e,newEdge);
-        //gp.addNewEdgeFromCommand(new Command(e.getName(), newEdge.getCharacter(), newEdge.getTo().getName()));
+        gp.addNewEdgeFromCommand(new Command(e.getName(), newEdge.getCharacter(), newEdge.getTo().getName()));
     }
 
     private static void replaceWithCycle(Graph gp, Entity e, Edge oldEdge, Edge newEdge) {
         gp.removeEdge(e, oldEdge);
         gp.addNewEntity(e,newEdge);
-        //gp.addNewEdgeFromCommand(new Command(newEdge.getTo().getName(), newEdge.getCharacter(), newEdge.getTo().getName()));
+        gp.addNewEdgeFromCommand(new Command(newEdge.getTo().getName(), newEdge.getCharacter(), newEdge.getTo().getName()));
     }
 
     private static Map<Entity, Set<Entity>> mapGraph(Graph gp) {
